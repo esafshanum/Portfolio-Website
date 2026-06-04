@@ -984,32 +984,31 @@
       <p style="font-size:0.78rem;color:rgba(255,255,255,0.4);">📍 Mumbra, Thane, Maharashtra</p>
     </div>
 
-    <div>
-      <div class="contact-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Your Name</label>
-            <input type="text" id="f-name" placeholder="Enter Full Name" />
-          </div>
-          <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" id="f-email" placeholder="xyz@example.com" />
-          </div>
+  <div>
+    <div class="contact-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="f-name" placeholder="Enter Full Name" />
         </div>
         <div class="form-group">
-          <label>Subject</label>
-          <input type="text" id="f-subject" placeholder="Collaboration / Opportunity / Just saying hi" />
+          <label>Email Address</label>
+          <input type="email" id="f-email" placeholder="xyz@example.com" />
         </div>
-        <div class="form-group">
-          <label>Message</label>
-          <textarea id="f-message" placeholder="I'd love to connect about..."></textarea>
-        </div>
-        <button class="btn-send" onclick="sendMessage()">
-          Send Message ↗
-        </button>
-        <div class="form-success" id="form-success">
-          ✅ Message sent! I'll get back to you soon.
-        </div>
+      </div>
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" id="f-subject" placeholder="Collaboration / Opportunity / Just saying hi" />
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea id="f-message" placeholder="I'd love to connect about..."></textarea>
+      </div>
+      <button class="btn-send" onclick="sendMessage()">
+        Send Message ↗
+      </button>
+      <div class="form-success" id="form-success">
+        ✅ Message sent! I'll get back to you soon.
       </div>
     </div>
   </div>
@@ -1083,15 +1082,46 @@
   }
 
   /* ── Contact form ── */
-  function sendMessage() {
-    const name = document.getElementById('f-name').value.trim();
-    const email = document.getElementById('f-email').value.trim();
-    const subject = document.getElementById('f-subject').value.trim();
-    const message = document.getElementById('f-message').value.trim();
-    if (!name || !email || !message) { alert('Please fill in your name, email, and message.'); return; }
-    const mailto = `mailto:esafshanum@email.com?subject=${encodeURIComponent(subject || 'Portfolio Contact')}&body=${encodeURIComponent(`Hi Esaf,\n\n${message}\n\n— ${name} (${email})`)}`;
-    window.location.href = mailto;
-    document.getElementById('form-success').style.display = 'block';
+    async function sendMessage() {
+    const name = document.getElementById("f-name").value.trim();
+    const email = document.getElementById("f-email").value.trim();
+    const subject = document.getElementById("f-subject").value.trim();
+    const message = document.getElementById("f-message").value.trim();
+
+    if (!name || !email || !message) {
+      alert("Please fill in your name, email, and message.");
+      return;
+    }
+
+    const btn = document.querySelector(".btn-send");
+    btn.textContent = "Sending...";
+    btn.disabled = true;
+
+    try {
+      const response = await fetch("https://formspree.io/f/xvznojpk", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ name, email, subject, message })
+      });
+
+      if (response.ok) {
+        document.getElementById("form-success").style.display = "block";
+        document.getElementById("f-name").value = "";
+        document.getElementById("f-email").value = "";
+        document.getElementById("f-subject").value = "";
+        document.getElementById("f-message").value = "";
+      } else {
+        alert("Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      alert("Network error. Please check your connection.");
+    } finally {
+      btn.textContent = "Send Message ↗";
+      btn.disabled = false;
+    }
   }
 </script>
 </body>
